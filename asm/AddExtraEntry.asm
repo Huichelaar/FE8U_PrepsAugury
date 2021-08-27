@@ -2,7 +2,7 @@
 @ Adds an extra entry to prep screen.
 .thumb
 
-push  {r4-r7, r14}
+push  {r4-r5, r14}
 sub   sp, #0x4
 
 
@@ -17,7 +17,15 @@ bl    GOTO_R4
 
 @ New entry.
 @ Disable entry if TextID == 0.
-bl    PREEXT_GetAuguryText
+mov   r4, #0x0
+sub   r5, r4, #0x1
+Loop:
+  mov   r0, r4
+  bl    PREEXT_GetAuguryText
+  add   r4, #0x1
+  cmp   r0, r5
+  beq   Loop
+
 cmp   r0, #0x0
 bne   L1
   mov   r2, #0x1
@@ -37,7 +45,7 @@ bl    GOTO_R4
 
 
 add   sp, #0x4
-pop   {r4-r7}
+pop   {r4-r5}
 pop   {r0}
 bx    r0
 GOTO_R4:

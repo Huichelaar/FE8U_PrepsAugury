@@ -1,5 +1,3 @@
-23/8/2021.
-
 INSTALL
   This patch is for FE8U!
 
@@ -25,15 +23,28 @@ CUSTOMIZATION
     execute a different functionality. Default is PREEXT_Procs_Augury, which is the Augury functionality described 
     in "WHATITDO?"
   
-  The text Augury displays is determined per chapter. You can change which textID will be displayed by changing the 
-  entries in "Tables/AuguryText.dmp". Use a hex editor to open and change this file. This table's entries are 
-  textIDs (size: short). The table is indexed by chapterID. There are 256 entries, one per chapter. If the textID is 
-  0 the Augury option will be disabled for that chapter. If you're an FEBuilder user and you wish to change the 
-  textIDs in the table, but you've already installed the patch, it's probably best to find the table in your ROM 
-  instead of changing "Tables/AuguryText.dmp" and re-installing the patch, or you'll likely waste space.
+  "Tables/Tables.event" contains a pointertable, PREEXT_AuguryText. This table is indexed by chapter. Each pointer 
+  points to an array of (Variable, TextID) pairs, where Variable is either a UnitID or Flag. If a unit with this 
+  UnitID is alive, or the Flag is set, the TextID's textstring will be displayed during the corresponding chapter's 
+  tactics. If multiple strings are to be displayed, they'll be concatenated in the order of appearance in the array. 
+  If Variable is 0, the corresponding string will be displayed unconditionally. The array terminates when both 
+  Variable and TextID are 0. If a chapter's pointer is 0, tactics will be disabled during that chapter. 
+  "Tables/Tables.event" has an example table containing an entry with a (Flag, TextID) pair, two (Variable, TextID) 
+  pairs, a no condition TextID, a terminator, and four dummy entries, allowing expansion for up to 8 conditions.
+  
+  For FEBuilder users: if you wish to increase the size of a chapter's array you'll need to repoint the table's 
+  entry to somewhere else in freespace. Before implementing the patch, consider thinking of some limit to how many 
+  conditions any chapter's tactics text would likely have, and set every chapter's array to that size (by using 
+  dummies to pad out the size) to avoid having to repoint entries later if there's not enough room left inline.
   
 
 CONCLUDING
+  23/8/2021.
   This took me far less time (only two days!) than I imagined it would. I made this for an asset trade with 
   Retrogamer, and they allowed this to be shared with everyone else.
+  
+  27/8/2021
+  I added the option to display different text based on whether certain units are alive or certain flags are set. 
+  It'll unfortunately make it necessary to plan ahead when using more rigid tools like FEBuilder.
+  
   ~Huichelaar
